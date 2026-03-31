@@ -15,7 +15,7 @@ function Navbar() {
 
         <div className={`flex items-center gap-3`}>
           <button className={`px-3 py1 rounded-lg bg-yellow-100`}>SignUp</button>
-          <button>SignUp</button>
+          <button>SignIn</button>
         </div>
       </div>
     </nav>
