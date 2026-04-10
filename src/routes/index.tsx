@@ -7,7 +7,7 @@ function App() {
   return (
     <div>
       <Navbar />
-      <h1>SCRAPER</h1>
+      <div className={``}>SCRAPER</div>
     </div>
   );
 }

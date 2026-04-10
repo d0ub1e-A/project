@@ -13,6 +13,8 @@ import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
+import { ThemeProvider } from "#/lib/theme-provider";
+import favIcon from "public/favicon.ico";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -30,14 +32,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
-      {
-        title: "TanStack Start Starter",
-      },
+      { title: "SCRAPY" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "icon",
+        href: favIcon,
       },
     ],
   }),
@@ -53,7 +57,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <TanStackQueryProvider>
-          {children}
+          <ThemeProvider>{children}</ThemeProvider>
           <TanStackDevtools
             config={{
               position: "bottom-right",
