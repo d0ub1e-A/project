@@ -16,10 +16,14 @@ import {
   FieldLabel,
 } from "#/components/ui/field";
 import { Input } from "#/components/ui/input";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { loginSchema } from "#/schemas/auth";
+import { authClient } from "#/lib/auth-client";
+import { toast } from "sonner";
+import type { ErrorContext } from "better-auth/react";
 
 export function LoginForm() {
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -29,22 +33,21 @@ export function LoginForm() {
       onSubmit: loginSchema,
     },
     onSubmit: async ({ value }) => {
-      // toast("You submitted the following values:", {
-      //   description: (
-      //     <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-code-foreground">
-      //       <code>{JSON.stringify(value, null, 2)}</code>
-      //     </pre>
-      //   ),
-      //   position: "bottom-right",
-      //   classNames: {
-      //     content: "flex flex-col gap-2",
-      //   },
-      //   style: {
-      //     "--border-radius": "calc(var(--radius)  + 4px)",
-      //   } as React.CSSProperties,
-      // });
-
-      console.log(value);
+      await authClient.signIn.email({
+        email: value.email,
+        password: value.password,
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Logged in successfully");
+            navigate({
+              to: "/",
+            });
+          },
+          onError: ({ error }: ErrorContext) => {
+            toast.error(error.message);
+          },
+        },
+      });
     },
   });
 

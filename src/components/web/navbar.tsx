@@ -1,8 +1,28 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import ThemeToggle from "../ThemeToggle";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
+import { authClient } from "#/lib/auth-client";
+import type { ErrorContext } from "better-auth/react";
+import { toast } from "sonner";
 
 function Navbar() {
+  const { data: session, isPending } = authClient.useSession();
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Signed out");
+          navigate({ to: "/" });
+        },
+        onError: ({ error }: ErrorContext) => {
+          toast.error(error.message);
+        },
+      },
+    });
+  }
+
   return (
     <nav
       className={`sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60`}
@@ -21,15 +41,32 @@ function Navbar() {
 
         <div className={`flex items-center gap-3`}>
           <ThemeToggle />
-          <Link
-            to="/login"
-            className={buttonVariants({ variant: "secondary" })}
-          >
-            Login
-          </Link>
-          <Link to="/signup" className={buttonVariants()}>
-            Get Started
-          </Link>
+          {isPending ? null : session ? (
+            <>
+              <Button
+                variant={"secondary"}
+                onClick={handleSignOut}
+                className={`cursor-pointer`}
+              >
+                Log out
+              </Button>
+              <Link to="/dashboard" className={buttonVariants()}>
+                Dashboard
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className={buttonVariants({ variant: "secondary" })}
+              >
+                Login
+              </Link>
+              <Link to="/signup" className={buttonVariants()}>
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

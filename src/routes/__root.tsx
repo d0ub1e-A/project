@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import type { QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "#/lib/theme-provider";
 import favIcon from "public/favicon.ico";
+import { Toaster } from "#/components/ui/sonner";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -57,7 +58,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <TanStackQueryProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            {children}
+            <Toaster closeButton position="bottom-right" />
+          </ThemeProvider>
           <TanStackDevtools
             config={{
               position: "bottom-right",

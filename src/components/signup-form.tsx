@@ -17,9 +17,12 @@ import { Input } from "#/components/ui/input";
 import { authClient } from "#/lib/auth-client";
 import { signupSchema } from "#/schemas/auth";
 import { useForm } from "@tanstack/react-form-start";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import type { ErrorContext } from "better-auth/react";
+import { toast } from "sonner";
 
 export function SignupForm() {
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       fullName: "",
@@ -34,7 +37,18 @@ export function SignupForm() {
         name: value.fullName,
         email: value.email,
         password: value.password,
-        callbackURL: "/dashboard",
+        // callbackURL: "/dashboard",
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Account created successfully");
+            navigate({
+              to: "/",
+            });
+          },
+          onError: ({ error }: ErrorContext) => {
+            toast.error(error.message);
+          },
+        },
       });
     },
   });
