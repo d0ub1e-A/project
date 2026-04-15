@@ -2,26 +2,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import ThemeToggle from "../ThemeToggle";
 import { Button, buttonVariants } from "../ui/button";
 import { authClient } from "#/lib/auth-client";
-import type { ErrorContext } from "better-auth/react";
-import { toast } from "sonner";
+import { handleSignOut } from "#/lib/utils";
 
 function Navbar() {
   const { data: session, isPending } = authClient.useSession();
   const navigate = useNavigate();
-
-  async function handleSignOut() {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success("Signed out");
-          navigate({ to: "/" });
-        },
-        onError: ({ error }: ErrorContext) => {
-          toast.error(error.message);
-        },
-      },
-    });
-  }
 
   return (
     <nav
@@ -45,7 +30,9 @@ function Navbar() {
             <>
               <Button
                 variant={"secondary"}
-                onClick={handleSignOut}
+                onClick={() => {
+                  handleSignOut(navigate);
+                }}
                 className={`cursor-pointer`}
               >
                 Log out

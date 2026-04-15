@@ -2,7 +2,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -14,12 +13,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "#/components/ui/sidebar";
+import { handleSignOut } from "#/lib/utils";
+import { useNavigate } from "@tanstack/react-router";
 import {
   ChevronsUpDownIcon,
-  SparklesIcon,
-  BadgeCheckIcon,
-  CreditCardIcon,
-  BellIcon,
   LogOutIcon,
 } from "lucide-react";
 
@@ -33,6 +30,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
 
   return (
     <SidebarMenu>
@@ -73,29 +71,9 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <SparklesIcon />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheckIcon />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+                  handleSignOut(navigate);
+                }}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
