@@ -19,10 +19,12 @@ import { signupSchema } from "#/schemas/auth";
 import { useForm } from "@tanstack/react-form-start";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ErrorContext } from "better-auth/react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
 export function SignupForm() {
   const navigate = useNavigate();
+  const [isPending, startTransition] = useTransition();
   const form = useForm({
     defaultValues: {
       fullName: "",
@@ -32,23 +34,25 @@ export function SignupForm() {
     validators: {
       onSubmit: signupSchema,
     },
-    onSubmit: async ({ value }) => {
-      await authClient.signUp.email({
-        name: value.fullName,
-        email: value.email,
-        password: value.password,
-        // callbackURL: "/dashboard",
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success("Account created successfully");
-            navigate({
-              to: "/dashboard",
-            });
+    onSubmit: ({ value }) => {
+      startTransition(async function () {
+        await authClient.signUp.email({
+          name: value.fullName,
+          email: value.email,
+          password: value.password,
+          // callbackURL: "/dashboard",
+          fetchOptions: {
+            onSuccess: () => {
+              toast.success("Account created successfully");
+              navigate({
+                to: "/dashboard",
+              });
+            },
+            onError: ({ error }: ErrorContext) => {
+              toast.error(error.message);
+            },
           },
-          onError: ({ error }: ErrorContext) => {
-            toast.error(error.message);
-          },
-        },
+        });
       });
     },
   });
@@ -149,7 +153,9 @@ export function SignupForm() {
 
             <FieldGroup>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button disabled={isPending} type="submit">
+                  {isPending ? "Creating..." : "Create Account"}
+                </Button>
                 <FieldDescription className="px-6 text-center">
                   Already have an account? <Link to="/login">Log in</Link>
                 </FieldDescription>

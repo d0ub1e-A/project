@@ -21,9 +21,11 @@ import { loginSchema } from "#/schemas/auth";
 import { authClient } from "#/lib/auth-client";
 import { toast } from "sonner";
 import type { ErrorContext } from "better-auth/react";
+import { useTransition } from "react";
 
 export function LoginForm() {
   const navigate = useNavigate();
+  const [isPending, startTransition] = useTransition();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -32,21 +34,23 @@ export function LoginForm() {
     validators: {
       onSubmit: loginSchema,
     },
-    onSubmit: async ({ value }) => {
-      await authClient.signIn.email({
-        email: value.email,
-        password: value.password,
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success("Logged in successfully");
-            navigate({
-              to: "/dashboard",
-            });
+    onSubmit: ({ value }) => {
+      startTransition(async function () {
+        await authClient.signIn.email({
+          email: value.email,
+          password: value.password,
+          fetchOptions: {
+            onSuccess: () => {
+              toast.success("Logged in successfully");
+              navigate({
+                to: "/dashboard",
+              });
+            },
+            onError: ({ error }: ErrorContext) => {
+              toast.error(error.message);
+            },
           },
-          onError: ({ error }: ErrorContext) => {
-            toast.error(error.message);
-          },
-        },
+        });
       });
     },
   });
@@ -125,7 +129,9 @@ export function LoginForm() {
             />
 
             <Field>
-              <Button type="submit">Login</Button>
+              <Button disabled={isPending} type="submit">
+                {isPending ? "Logging in..." : "Login"}
+              </Button>
               <FieldDescription className="text-center">
                 Don&apos;t have an account? <Link to="/signup">Sign up</Link>
               </FieldDescription>
