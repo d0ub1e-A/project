@@ -9,3 +9,6 @@ for ECE-3100
 linkOptions(/* any attribute named 'to' will be considered to have a valid route and hence the type safety is achieved */)
 ```
 5. All code in TanStack Start is `isomorphic` by default - it runs and is included in both `server` and `client` bundles unless explicitly constrained. Route loader functions are isomorphic. This isomorphic functions are both sided :). If the page gets a hot reload, the functions are executed in server side (CSR), if the client side navigation is invoked, then the same function will be executed on the client side (CSR).
+6. Why to use middleware?
+> - It makes the code cleaner as the server function can be used only for handling business logic rather than handling authentication first.
+> - It makes reusable code
