@@ -1,6 +1,10 @@
 import { prisma } from "#/db";
 import { firecrawl } from "#/lib/firecrawl";
-import { extractSchema, singleImportSchema } from "#/schemas/import";
+import {
+  bulkImportSchema,
+  extractSchema,
+  singleImportSchema,
+} from "#/schemas/import";
 import { createServerFn } from "@tanstack/react-start";
 import type z from "zod";
 import { authFnMiddleware } from "#/middleware/auth";
@@ -65,4 +69,18 @@ export const scrapeUrlFn = createServerFn({ method: "POST" })
 
       return failedItem;
     }
+  });
+
+export const mapUrlFn = createServerFn({ method: "POST" })
+  /* .inputValidator(bulkImportSchema)
+   */.handler(async function (/* { data } */) {
+    try {
+      const result = await firecrawl.map("https://www.firecrawl.dev/blog", {
+        limit: 20,
+        search: "blog",
+        location: {
+          languages: ['en', 'bn'],
+        }
+      });
+    } catch (error) {}
   });

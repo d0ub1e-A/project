@@ -20,6 +20,7 @@ import { useForm } from "@tanstack/react-form-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { Globe, LinkIcon, Loader2 } from "lucide-react";
 import { useTransition } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/import")({
   component: RouteComponent,
@@ -39,6 +40,7 @@ function RouteComponent() {
       startTransition(async function () {
         await scrapeUrlFn({ data: value });
         singleImportForm.reset();
+        toast.success("Scraped successfully!");
       });
     },
   });
